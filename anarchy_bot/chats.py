@@ -27,7 +27,7 @@ async def ask_to_set_logs_chat_msg(
     msg: Message,
 ):
     if msg.from_user.id not in config.admins:
-        await msg.reply(t('denied_cb', msg))
+        await msg.reply(t('denied', msg))
         return
     if l.logs_chat and msg.chat.id == l.logs_chat.id:
         await msg.reply('already using this chat for logs')
