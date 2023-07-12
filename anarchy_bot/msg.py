@@ -69,6 +69,8 @@ async def on_message(
         if msg.service == pg.enums.MessageServiceType.LEFT_CHAT_MEMBERS:
             await notify_removed(msg)
         return
+    if not msg.text:
+        return
     if not config.owner:
         await set_owner(
             msg,
@@ -148,6 +150,10 @@ async def becomeadmin(
             text += f'\n\nsuccesfully promoted {mention(msg.from_user)} to admin'
             await responce.edit_text(text)
             break
+        except pyrogram.errors.ChatAdminRequired:
+            text += '\n\ni have no rights to make you an admin'
+            await responce.edit_text(text)
+            return
         except pyrogram.errors.UserCreator:
             text += '\n\nbro you are chat owner'
             await responce.edit_text(text)
