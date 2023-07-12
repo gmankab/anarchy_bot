@@ -1,0 +1,121 @@
+help_msg: |
+  """
+  wellcome to @gmanka's anarchy bot
+  
+  /h | /help - get this command
+  /becomeadmin {title} - makes you an admin with selected title
+
+  admin commands:
+  /setlogs - set this chat as logs chat
+
+  source code - github.com/gmankab/anarchy_bot
+  """
+admin_panel_button:
+  🥔 admin panel
+admin_panel_msg:
+  welcome to admin panel
+list_bot_admins_button:
+  🥔 admins
+list_bot_users_button:
+  👨‍🦽users
+list_bot_chats_button:
+  💬 chats
+logs_chat_button:
+  📝 logs
+there_are_bot_admins_msg:
+  there are bot admins
+there_are_bot_users_msg:
+  there are bot users
+there_are_bot_chats_msg:
+  there are chats in which bot was added
+back_to_admin_panel_button:
+  ◄ back to admin panel 🥔
+back_to_bot_users_list_button:
+  ◄ back to users list 👨‍🦽
+back_to_bot_admins_list_button:
+  ◄ back to admins list 🥔
+back_to_bot_chats_list_button:
+  ◄ back to chats list 💬
+back_main_button:
+  ◄ back to main menu 🏠
+main_menu_button:
+  🏠 main menu
+done_button:
+  ✅ done
+yes_button:
+  ✅ yes
+set_logs_chat_msg:
+  here you can add chat for logs
+show_logs_chat_msg:
+  here is your chat for logs
+set_logs_chat_button:
+  📝 set logs chat
+replace_logs_chat_button:
+  🔄 replace logs chat
+open_logs_chat_button:
+  💬 open logs chat
+remove_logs_chat_button:
+  ❌ remove logs chat
+ask_to_set_logs_chat_msg:
+  do you want to set chat "{title}" as chat for logs?
+confirm_set_logs_chat_button:
+  ✏️ set chat
+bad_button_cb:
+  ❌ bad button
+more_info_button:
+  📋 more info
+choose_page_msg:
+  choose page
+wrong_page_cb:
+  ❌ wrong page
+first_page_cb:
+  ❌ you on first page
+last_page_cb:
+  ❌ you on last page
+add_to_new_chat_button:
+  💬 add to new chat
+add_admin_button:
+  🥔 add new admin
+denied:
+  ❌ you are not allowed to touch it
+promote_to_admin_button:
+  🥔 promote to admin
+promote_to_admin_message: |
+  {user} requested admin rights
+  
+  press button below to promote him to admin
+request_admin_rights_message:
+  press button below to request admin rights
+request_admin_rights_button:
+  🥔 request admin rights
+chat_partner_must_request_cb:
+  your chat partner must press this button to request admin rights
+chat_partner_must_promote_cb:
+  your chat partner must press this button to promote you admin
+no_bot_admins_cb:
+  bot has no admins
+no_bot_users_cb:
+  bot has no users
+no_bot_chats_cb:
+  bot has no chats
+no_mc_nicks_msg:
+  no minecraft nicks
+shrink_button:
+  🔼 shrink 🔼
+cancel_button:
+  ❌ cancel
+bad_nick_msg:
+  nick must contain only english letters and numbers, try again
+too_long_nick_msg:
+  nick must not be longer then {count} symbols, try again
+not_coded_yet:
+  not coded yet 😏
+setup_msg: |
+  here is how to setup me
+
+  1) go to @botfather -> /mybots -> @{username} -> bot settings
+  2) inline mode -> turn on
+  3) group privacy -> turn off -> back to settings
+  4) group admin rights -> select all except anonymous
+  5) check console to make you bot admin
+
