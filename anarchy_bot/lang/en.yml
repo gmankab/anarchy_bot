@@ -1,6 +1,6 @@
 help_msg: |
   """
-  wellcome to @gmanka's anarchy bot
+  welcome to @gmanka's anarchy bot
   
   /h | /help - get this command
   /becomeadmin {title} - makes you an admin with selected title

@@ -14,7 +14,7 @@ pip install -U anarchy_bot
 pythom -m anarchy_bot
 ```
 
-## translete to your language
+## translate to your language
 
 - fork repo
 - go to [anarchy_bot/lang](https://github.com/gmankab/saltomaru_connect_tg/tree/main/saltomaru_connect_tg/lang)

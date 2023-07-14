@@ -113,7 +113,8 @@ async def help_msg(
     msg: Message,
 ):
     await msg.reply(
-        **get_main_message(msg)
+        **get_main_message(msg),
+        disable_web_page_preview = True,
     )
 
 
