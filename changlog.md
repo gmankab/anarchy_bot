@@ -1,6 +1,10 @@
 # changlelog
 
-## 23.0.2
+## 23.0.4
+
+- fixed typos
+
+## 23.0.3
 
 - some fixes
 
