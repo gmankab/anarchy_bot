@@ -11,7 +11,7 @@ pip install -U anarchy_bot
 ## run
 
 ```bash
-pythom -m anarchy_bot
+python -m anarchy_bot
 ```
 
 ## translate to your language
