@@ -17,7 +17,7 @@ pythom -m anarchy_bot
 ## translate to your language
 
 - fork repo
-- go to [anarchy_bot/lang](https://github.com/gmankab/saltomaru_connect_tg/tree/main/saltomaru_connect_tg/lang)
+- go to [anarchy_bot/lang](https://github.com/gmankab/anarchy_bot/tree/main/anarchy_bot/lang)
 - duplicate `en.yml` file
 - rename it to something like `ru.yml`
 - edit file
