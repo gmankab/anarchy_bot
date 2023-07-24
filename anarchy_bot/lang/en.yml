@@ -80,7 +80,7 @@ add_to_new_chat_button:
 add_admin_button:
   🥔 add new admin
 denied:
-  ❌ you are not allowed to touch it
+  ❌ you are not bot owner
 promote_to_admin_button:
   🥔 promote to admin
 promote_to_admin_message: |
