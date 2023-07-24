@@ -56,6 +56,8 @@ def is_command(
     msg_text: str,
     command: str,
 ) -> bool:
+    if msg_text == command:
+        return True
     if msg_text.startswith(command + ' '):
         return True
     if msg_text.startswith(f'{command}@{config.me.username}'):
