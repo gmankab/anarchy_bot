@@ -56,7 +56,7 @@ def is_command(
     msg_text: str,
     command: str,
 ) -> bool:
-    if msg_text.startswith(command + ''):
+    if msg_text.startswith(command + ' '):
         return True
     if msg_text.startswith(f'{command}@{config.me.username}'):
         return True
@@ -133,8 +133,16 @@ async def help_msg(
         disable_web_page_preview = True,
     )
     if msg.from_user.id in config.admins:
+        text = t(
+            'owner_commands_msg',
+            msg,
+        ).strip(
+            '"""'
+        ).strip(
+            '"""\n'
+        )
         await msg.reply(
-            t('owner_commands_msg', msg)
+            t(text, msg)
         )
 
 
