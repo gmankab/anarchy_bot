@@ -120,8 +120,9 @@ async def on_message(
                 return
             return await to_run(client, msg)
     if msg.chat.type == pg.enums.ChatType.PRIVATE:
-        await msg.reply(
-            **get_main_message(msg)
+        await help_msg(
+            client,
+            msg,
         )
         return
 
@@ -144,7 +145,7 @@ async def help_msg(
             '"""\n'
         )
         await msg.reply(
-            t(text, msg)
+            text
         )
 
 
