@@ -14,9 +14,9 @@ from config import(
     c,
 )
 from common import (
-    get_main_message,
     filter_admin,
     write_error,
+    get_buttons,
     mention,
     chats,
     l,
@@ -132,21 +132,19 @@ async def help_msg(
     msg: Message,
 ):
     await msg.reply(
-        **get_main_message(msg),
+        t('help_msg', msg),
         disable_web_page_preview = True,
     )
-    if msg.from_user.id in config.admins:
-        text = t(
-            'owner_commands_msg',
-            msg,
-        ).strip(
-            '"""'
-        ).strip(
-            '"""\n'
-        )
-        await msg.reply(
-            text
-        )
+    if msg.from_user.id not in config.admins:
+        return
+    await msg.reply(
+        text = t('owner_commands_msg', msg),
+        reply_markup = get_buttons(
+        [['admin_panel_button']],
+        msg,
+    )
+,
+    )
 
 
 async def becomeadmin(

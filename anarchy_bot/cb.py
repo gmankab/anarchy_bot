@@ -10,7 +10,6 @@ from config import (
     c,
 )
 from common import (
-    get_main_message,
     filter_admin,
     get_end_int,
     get_buttons,
@@ -136,7 +135,7 @@ async def back_main_button(
     cb: CallbackQuery,
 ) -> None:
     await cb.edit_message_text(
-        **get_main_message(cb)
+       t('help_msg', cb),
     )
 
 
@@ -243,6 +242,6 @@ async def main_menu_button(
 ) -> None:
     chats.users_dict[cb.from_user.id] = None
     await cb.message.reply(
-        **get_main_message(cb)
+        t('help_msg', cb),
     )
 

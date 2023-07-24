@@ -1,8 +1,11 @@
 # changlelog
 
-## 23.0.9
+## 23.0.10
 
 - admin panel button moved to admin help message
+
+## 23.0.9
+
 - "you are not allowed to touch it" renamed to "you are not bot owner"
 
 ## 23.0.8

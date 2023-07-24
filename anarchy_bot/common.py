@@ -349,47 +349,6 @@ def write_error() -> str:
     return str(error_path)
 
 
-def get_main_message(
-    user: Message | CallbackQuery | User,
-) -> dict:
-    buttons = []
-    reply_markup = None
-    if isinstance(
-        user,
-        Message,
-    ):
-        u = user.from_user
-    elif isinstance(
-        user,
-        CallbackQuery,
-    ):
-        u = user.from_user
-    elif isinstance(
-        user,
-        User,
-    ):
-        u = user
-    else:
-        raise TypeError(
-            f'{type(user)} is unexpected type for usr_msg'
-        )
-    if u.id in config.admins:
-        buttons.append(['admin_panel_button'])
-    if buttons:
-        reply_markup = get_buttons(
-            buttons,
-            user,
-        )
-    else:
-        reply_markup = None
-    text = t('help_msg', user)
-    text = text.strip('"""').strip('"""\n')
-    return {
-        'text': text,
-        'reply_markup': reply_markup,
-    }
-
-
 async def filter_admin(
     item: CallbackQuery | Message,
 ):

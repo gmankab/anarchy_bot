@@ -70,7 +70,11 @@ class Translation:
             elif item not in self.data[lang]:
                 c.log(f'[yellow]warn:[/yellow] not in {lang}')
             lang = 'en'
-        return self.data[lang][item]
+        return self.data[lang][item].strip(
+            '"""'
+        ).strip(
+            '"""\n'
+        )
 
 
 translation = Translation()
