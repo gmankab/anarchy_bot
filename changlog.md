@@ -1,5 +1,11 @@
 # changlelog
 
+## 23.0.5
+
+- fixed reacting on message without space after command, now bot will not react on messages like "/help1", becouse there is no space after p
+- added error message when getting /becomeadmin message from channel
+- now bot owner commands will be sent only if bot owner writes /help
+
 ## 23.0.4
 
 - fixed typos

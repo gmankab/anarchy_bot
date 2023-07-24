@@ -52,6 +52,17 @@ async def catched_on_message(
         )
 
 
+def is_command(
+    msg_text: str,
+    command: str,
+) -> bool:
+    if msg_text.startswith(command + ''):
+        return True
+    if msg_text.startswith(f'{command}@{config.me.username}'):
+        return True
+    return False
+
+
 async def on_message(
     client: Client,
     msg: Message,
@@ -88,19 +99,24 @@ async def on_message(
         start = {
             'logs': ask_to_set_logs_chat_msg,
         }
-        for action, func in start.items():
-            if msg.text.endswith(action):
-                await func(client, msg)
+        for action, to_run in start.items():
+            if msg.text.endswith('?startgroup=' + action):
+                await to_run(client, msg)
                 return
-    for excpected_msg, func in users.items():
-        if msg.text.startswith(excpected_msg):
-            c.log(f'got msg {msg.text} from {msg.from_user.id}')
-            return await func(client, msg)
-    for excpected_msg, func in admins.items():
-        if msg.text.startswith(excpected_msg):
+    for excpected_msg, to_run in users.items():
+        if is_command(
+            msg.text,
+            excpected_msg,
+        ):
+            return await to_run(client, msg)
+    for excpected_msg, to_run in admins.items():
+        if is_command(
+            msg.text,
+            excpected_msg,
+        ):
             if await filter_admin(msg):
                 return
-            return await func(client, msg)
+            return await to_run(client, msg)
     if msg.chat.type == pg.enums.ChatType.PRIVATE:
         await msg.reply(
             **get_main_message(msg)
@@ -116,6 +132,10 @@ async def help_msg(
         **get_main_message(msg),
         disable_web_page_preview = True,
     )
+    if msg.from_user.id in config.admins:
+        await msg.reply(
+            t('owner_commands_msg', msg)
+        )
 
 
 async def becomeadmin(
@@ -134,6 +154,10 @@ async def becomeadmin(
             'wrong chat type, expected supergroup, got ' + str(msg.chat.type).lower()
         )
         return
+    if not msg.from_user:
+        await msg.reply(
+            'you must send message as user, not as channel or chat'
+        )
     text = f'trying to make {mention(msg.from_user)} an admin...'
     responce: Message = await msg.reply(
         text

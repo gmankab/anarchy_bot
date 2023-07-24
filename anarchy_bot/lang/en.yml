@@ -3,12 +3,15 @@ help_msg: |
   welcome to @gmanka's anarchy bot
   
   /h | /help - get this command
-  /becomeadmin {title} - makes you an admin with selected title
-
-  admin commands:
-  /setlogs - set this chat as logs chat
+  /ba | /becomeadmin {title} - makes you an admin with selected title
 
   source code - github.com/gmankab/anarchy_bot
+  """
+owner_commands_msg: |
+  """
+  bot owner commands:
+
+  /setlogs - set this chat as logs chat
   """
 admin_panel_button:
   🥔 admin panel
