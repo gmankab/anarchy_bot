@@ -3,6 +3,8 @@
 ## 23.1.0
 
 - changed response logic
+- updated english translation
+- fixed error when getting /help from channels
 
 ## 23.0.10
 

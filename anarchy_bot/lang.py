@@ -53,7 +53,10 @@ class Translation:
                 user,
                 i,
             ):
-                lang = user.from_user.language_code
+                try:
+                    lang = user.from_user.language_code
+                except Exception:
+                    lang = 'en'
         if not lang:
             lang = 'en'
         if 'en' not in self.data:
