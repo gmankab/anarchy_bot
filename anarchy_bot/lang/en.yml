@@ -117,8 +117,8 @@ setup_msg: |
   here is how to setup me
 
   1) go to @botfather -> /mybots -> @{username} -> bot settings
-  2) inline mode -> turn on
+  2) inline mode -> turn on -> back to settings
   3) group privacy -> turn off -> back to settings
-  4) group admin rights -> select all except anonymous
+  4) group admin rights -> select all
   5) check console to make you bot admin
 

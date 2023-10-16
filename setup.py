@@ -14,7 +14,7 @@ setup_py = Path(
 app_name = 'anarchy_bot'
 app_path = Path(
     __file__
-).parent.parent.resolve()
+).parent.resolve()
 venv_path = app_path / '.venv'
 activate_sh = venv_path / 'bin' / 'activate'
 venv_python = venv_path / 'bin' / 'python'
