@@ -1,3 +1,5 @@
+# license is gnu agpl 3 - gnu.org/licenses/agpl-3.0.en.html
+
 import datetime
 import rich.console
 import gmanka_yml as yml

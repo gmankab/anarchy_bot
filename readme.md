@@ -24,3 +24,7 @@ python -m anarchy_bot
 - make pull request
 - bot automatically decects language set in user's telegram client, and will search the dir for file with translation
 
+## licence
+
+license is gnu agpl 3 - gnu.org/licenses/agpl-3.0.en.html
+

@@ -1,3 +1,5 @@
+# license is gnu agpl 3 - gnu.org/licenses/agpl-3.0.en.html
+
 import pyrogram as pg
 import pyrogram.enums
 import pyrogram.errors
@@ -179,6 +181,7 @@ async def becomeadmin(
                 privileges = ChatPrivileges(
                     can_manage_chat = True,
                     can_change_info = True,
+                    can_invite_users = True,
                 ),
             )
             texts.append(

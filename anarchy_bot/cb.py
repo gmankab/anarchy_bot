@@ -1,3 +1,5 @@
+# license is gnu agpl 3 - gnu.org/licenses/agpl-3.0.en.html
+
 from lang import t
 from pyrogram.client import Client
 from pyrogram.types import (
