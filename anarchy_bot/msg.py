@@ -3,6 +3,7 @@
 import pyrogram as pg
 import pyrogram.enums
 import pyrogram.errors
+import asyncio
 from lang import t
 from pyrogram.client import Client
 from pyrogram.types import (
@@ -185,19 +186,19 @@ async def becomeadmin(
                 ),
             )
             texts.append(
-                f'succesfully promoted {mention(msg.from_user)} to admin',
+                f'succesfully promoted {mention(msg.from_user)} to admin'
             )
             await responce.edit_text('\n\n'.join(texts))
             break
         except pyrogram.errors.ChatAdminRequired:
             texts.append(
-                'i have no rights to make you an admin',
+                'i have no rights to make you an admin'
             )
             await responce.edit_text('\n\n'.join(texts))
             return
         except pyrogram.errors.UserCreator:
             texts.append(
-                'bro you are chat owner',
+                'bro you are chat owner'
             )
             await responce.edit_text('\n\n'.join(texts))
             return
@@ -228,7 +229,7 @@ async def becomeadmin(
                     )
                     demoted = True
                     texts.append(
-                        f'too many admins, demoting {mention(admin.user)}',
+                        f'too many admins, demoting {mention(admin.user)}'
                     )
                     await responce.edit_text('\n\n'.join(texts))
                     break
@@ -236,23 +237,24 @@ async def becomeadmin(
                     continue
                 except Exception as e:
                     texts.append(
-                        f'failed to demote {mention(admin.user)}: {e}',
+                        f'failed to demote {mention(admin.user)}: {e}'
                     )
                     await responce.edit_text('\n\n'.join(texts))
                     continue
             if demoted:
                 break
             texts.append(
-                f'too many admins, no admin available to demote',
+                f'too many admins, no admin available to demote'
             )
             await responce.edit_text('\n\n'.join(texts))
             return
+    await asyncio.sleep(1)
     await client.set_administrator_title(
         chat_id = msg.chat.id,
         user_id = msg.from_user.id,
         title = title,
     )
-    texts[-1] = f'succesfully promoted {mention(msg.from_user)} to admin with title {title}',
+    texts[-1] = f'succesfully promoted {mention(msg.from_user)} to admin with title {title}'
     await responce.edit_text('\n\n'.join(texts))
 
 
