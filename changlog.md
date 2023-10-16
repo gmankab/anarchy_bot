@@ -1,5 +1,10 @@
 # changlelog
 
+## 23.1.1
+
+- added a license
+- admins allowed to add users
+
 ## 23.1.0
 
 - changed response logic

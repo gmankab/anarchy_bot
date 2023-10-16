@@ -26,5 +26,5 @@ python -m anarchy_bot
 
 ## licence
 
-license is gnu agpl 3 - gnu.org/licenses/agpl-3.0.en.html
+license is gnu agpl 3 - (gnu.org/licenses/agpl-3.0.en.html)[https://gnu.org/licenses/agpl-3.0.en.html]
 
