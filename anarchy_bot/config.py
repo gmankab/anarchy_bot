@@ -23,7 +23,7 @@ except Exception:
 
 
 app_name = 'anarchy_bot'
-app_version = '23.0.10'
+app_version = '23.1.0'
 c = rich.console.Console()
 c.log(f'imported [deep_sky_blue1]{__file__}')
 app_path = Path(

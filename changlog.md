@@ -1,5 +1,9 @@
 # changlelog
 
+## 23.1.0
+
+- changed response logic
+
 ## 23.0.10
 
 - admin panel button moved to admin help message

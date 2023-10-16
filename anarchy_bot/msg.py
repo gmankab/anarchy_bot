@@ -153,24 +153,24 @@ async def becomeadmin(
 ):
     splitted = msg.text.split(' ', 1)
     if len(splitted) == 1:
-        await msg.reply(
+        responce: Message = await msg.reply(
             'you must specify your title after /becomeadmin\n\nexample: /becomeadmin bebra'
         )
         return
     title = splitted[-1][:16]
     if msg.chat.type != pyrogram.enums.ChatType.SUPERGROUP:
-        await msg.reply(
+        responce: Message = await msg.reply(
             'wrong chat type, expected supergroup, got ' + str(msg.chat.type).lower()
         )
         return
     if not msg.from_user:
-        await msg.reply(
+        responce: Message = await msg.reply(
             'you must send message as user, not as channel or chat'
         )
-    text = f'trying to make {mention(msg.from_user)} an admin...'
     responce: Message = await msg.reply(
-        text
+        text = f'trying to make {mention(msg.from_user)} an admin...'
     )
+    texts = []
     while True:
         try:
             await client.promote_chat_member(
@@ -181,16 +181,22 @@ async def becomeadmin(
                     can_change_info = True,
                 ),
             )
-            text += f'\n\nsuccesfully promoted {mention(msg.from_user)} to admin'
-            await responce.edit_text(text)
+            texts.append(
+                f'succesfully promoted {mention(msg.from_user)} to admin',
+            )
+            await responce.edit_text('\n\n'.join(texts))
             break
         except pyrogram.errors.ChatAdminRequired:
-            text += '\n\ni have no rights to make you an admin'
-            await responce.edit_text(text)
+            texts.append(
+                'i have no rights to make you an admin',
+            )
+            await responce.edit_text('\n\n'.join(texts))
             return
         except pyrogram.errors.UserCreator:
-            text += '\n\nbro you are chat owner'
-            await responce.edit_text(text)
+            texts.append(
+                'bro you are chat owner',
+            )
+            await responce.edit_text('\n\n'.join(texts))
             return
         except pyrogram.errors.AdminsTooMuch:
             admins: list[ChatMember] = await chats.list_chat_admins(
@@ -218,27 +224,33 @@ async def becomeadmin(
                         ),
                     )
                     demoted = True
-                    text += f'\n\ntoo many admins, demoting {mention(admin.user)}'
-                    await responce.edit_text(text)
+                    texts.append(
+                        f'too many admins, demoting {mention(admin.user)}',
+                    )
+                    await responce.edit_text('\n\n'.join(texts))
                     break
                 except pyrogram.errors.UserCreator:
                     continue
                 except Exception as e:
-                    text += f'\n\nfailed to demote {mention(admin.user)}\n{e}'
-                    await responce.edit_text(text)
+                    texts.append(
+                        f'failed to demote {mention(admin.user)}: {e}',
+                    )
+                    await responce.edit_text('\n\n'.join(texts))
                     continue
             if demoted:
                 break
-            text += f'\n\ntoo many admins, no admin available to demote'
-            await responce.edit_text(text)
+            texts.append(
+                f'too many admins, no admin available to demote',
+            )
+            await responce.edit_text('\n\n'.join(texts))
             return
     await client.set_administrator_title(
         chat_id = msg.chat.id,
         user_id = msg.from_user.id,
         title = title,
     )
-    text += f'\n\nsuccesfully set title {title}'
-    await responce.edit_text(text)
+    texts[-1] = f'succesfully promoted {mention(msg.from_user)} to admin with title {title}',
+    await responce.edit_text('\n\n'.join(texts))
 
 
 async def set_owner(
