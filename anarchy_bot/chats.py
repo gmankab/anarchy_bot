@@ -179,10 +179,11 @@ async def notify_removed(
     msg: Message,
 ) -> None:
     if msg.left_chat_member.id != config.me.id:
-        if msg.chat.id == config.logs_chat_id:
-            await l.remove()
-            await l.notify(
-                f'{mention(msg.from_user)} removed me from logs chat'
-            )
-    return
+        return
+    if msg.chat.id != config.logs_chat_id:
+        return
+    await l.remove()
+    await l.notify(
+        f'{mention(msg.from_user)} removed me from logs chat'
+    )
 

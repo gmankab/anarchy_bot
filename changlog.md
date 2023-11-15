@@ -1,5 +1,9 @@
 # changlelog
 
+## 23.1.4
+
+- more user friendly message when have no permisions to promote user to admin
+
 ## 23.1.3
 
 - fixed readme

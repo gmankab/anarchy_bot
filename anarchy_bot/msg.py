@@ -190,7 +190,7 @@ async def becomeadmin(
             )
             await responce.edit_text('\n\n'.join(texts))
             break
-        except pyrogram.errors.ChatAdminRequired:
+        except pyrogram.errors.ChatAdminRequired | pyrogram.errors.RightForbidden:
             texts.append(
                 'i have no rights to make you an admin'
             )
