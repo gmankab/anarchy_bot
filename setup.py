@@ -17,22 +17,19 @@ app_path = Path(
     __file__
 ).parent.resolve()
 venv_path = app_path / '.venv'
-activate_sh = venv_path / 'bin' / 'activate'
-venv_python = venv_path / 'bin' / 'python'
+venv_bin = venv_path / 'bin'
+activate_sh = venv_bin / 'activate'
+venv_python = venv_bin / 'python'
+pip = venv_bin / 'pip'
 start_sh = app_path / 'start.sh'
 ssh_ip = '141.145.194.71'
 ssh_username = 'bogdan'
-pip = [
-    venv_python,
-    '-m',
-    'pip',
-]
 dependencies = [
-    'gmanka_yml==23.0.*',
-    'pyrogram==2.0.*',
-    'tgcrypto==1.2.*',
-    'uvloop==0.17.*',
-    'rich==13.4.*',
+    'gmanka_yml',
+    'pyrogram',
+    'tgcrypto',
+    'uvloop',
+    'rich',
 ]
 
 
@@ -51,40 +48,15 @@ def install_libs():
     if venv_path.exists():
         shutil.rmtree(venv_path)
 
-    venv.create(venv_path)
-    get_pip_url = 'https://bootstrap.pypa.io/get-pip.py'
-    response = urllib.request.urlopen(
-        get_pip_url
-    )
-    total_size = int(
-        response.headers.get('content-length', 0)
-    )
-    block_size = 1024 * 8
-    count = 0
-    get_pip = b''
-    while True:
-        chunk = response.read(block_size)
-        if not chunk:
-            break
-        get_pip += chunk
-        count += 1
-        done = count * block_size
-        percent_done = done * 100 // total_size
-        print(
-            f'\rdownloading get-pip.py: {percent_done}%',
-            end = '',
-        )
-        sys.stdout.flush()
-    print()
-    python_process = subprocess.Popen(
-        [venv_python],
-        stdin = subprocess.PIPE,
-    )
-    python_process.communicate(
-        input = get_pip
+    venv.create(
+        env_dir = venv_path,
+        with_pip = True,
     )
     subprocess.run(
-        [*pip, 'install', '-U', *dependencies]
+        [pip, 'install', '-U', 'pip']
+    )
+    subprocess.run(
+        [pip, 'install', '-U', *dependencies]
     )
 
 

@@ -345,7 +345,7 @@ def write_error() -> str:
             file = file,
         )
         c_error.print_exception(
-            show_locals = True,
+            show_locals = False,
             suppress = [pg],
         )
     return str(error_path)

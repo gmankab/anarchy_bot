@@ -1,5 +1,10 @@
 # changlelog
 
+## 23.1.6
+
+- removed versions in dependencies
+- fixed promoting after demoting
+
 ## 23.1.5
 
 - more user friendly message when have no permisions to promote user to admin
