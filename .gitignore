@@ -3,4 +3,5 @@ __pycache__
 start.sh
 test.py
 .venv
+dist
 
