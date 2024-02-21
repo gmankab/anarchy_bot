@@ -21,7 +21,7 @@ mute_msg: |
   first button increases mute duration
   second button reduces mute duration
   """
-permisssions_msg: |
+permissions_msg: |
   """
   i needs following permissions
   - change group info
