@@ -25,7 +25,7 @@ async def becomeadmin(
             'you must specify your title after /becomeadmin\n\nexample: /becomeadmin bebra'
         )
         return
-    title = splitted[-1][:16]
+    tag = splitted[-1][:16]
     if msg.chat.type != pyrogram.enums.ChatType.SUPERGROUP:
         responce: Message = await msg.reply(
             'wrong chat type, expected supergroup, got ' + str(msg.chat.type).lower()
@@ -35,11 +35,53 @@ async def becomeadmin(
         responce: Message = await msg.reply(
             'you must send message as user, not as channel or chat'
         )
+        return
     responce: Message = await msg.reply(
         text = f'trying to make {mention(msg.from_user)} an admin...'
     )
-    texts = []
+    text = await promote_to_admin(
+        responce = responce,
+        client = client,
+        msg = msg,
+    )
+    counter = 0
     while True:
+        counter += 1
+        await asyncio.sleep(1)
+        try:
+            await client.set_administrator_title(
+                chat_id = msg.chat.id,
+                user_id = msg.from_user.id,
+                title = tag,
+            )
+        except ValueError:
+            if counter > 5:
+                await responce.edit_text(
+                    f'error: telegram says you are still not admin'
+                )
+                return
+            else:
+                continue
+        else:
+            text += f' with title {tag}'
+            await responce.edit_text(
+                text
+            )
+            return
+
+
+async def promote_to_admin(
+    responce: Message,
+    client: Client,
+    msg: Message,
+) -> str:
+    counter = 0
+    demoted_message: str = ''
+    while True:
+        counter += 1
+        if counter > 4:
+            await responce.edit_text('error: 4 bad attempts')
+            return ''
         try:
             await client.promote_chat_member(
                 chat_id = msg.chat.id,
@@ -50,54 +92,46 @@ async def becomeadmin(
                     can_invite_users = True,
                 ),
             )
-        except (
-            pyrogram.errors.ChatAdminRequired,
-            pyrogram.errors.RightForbidden,
-        ):
-            texts.append(
-                'i have no rights to make you an admin'
+        except pyrogram.errors.ChatAdminRequired:
+            await responce.edit_text(
+                'i am not admin in this chat'
             )
-            await responce.edit_text('\n\n'.join(texts))
-            return
+            return ''
+        except pyrogram.errors.RightForbidden:
+            await responce.edit_text(
+                'you are bigger admin than me'
+            )
+            return ''
         except pyrogram.errors.UserCreator:
-            texts.append(
-                'bro you are chat owner'
+            await responce.edit_text(
+                'you are chat owner'
             )
-            await responce.edit_text('\n\n'.join(texts))
-            return
+            return ''
         except pyrogram.errors.AdminsTooMuch:
-            is_demoted = await demote(
+            demoted_message = await demote(
                 client = client,
                 msg = msg,
-                texts = texts,
                 responce = responce,
             )
-            if is_demoted:
+            if demoted_message:
                 continue
             else:
-                return
+                return ''
         else:
-            texts.append(
-                f'succesfully promoted {mention(msg.from_user)} to admin'
+            promoted_message = f'{mention(msg.from_user)} promoted to admin'
+            if demoted_message:
+                promoted_message = demoted_message + '\n\n' + promoted_message
+            await responce.edit_text(
+                promoted_message
             )
-            await responce.edit_text('\n\n'.join(texts))
-            break
-    await asyncio.sleep(1)
-    await client.set_administrator_title(
-        chat_id = msg.chat.id,
-        user_id = msg.from_user.id,
-        title = title,
-    )
-    texts[-1] = f'succesfully promoted {mention(msg.from_user)} to admin with title {title}'
-    await responce.edit_text('\n\n'.join(texts))
+            return promoted_message
 
 
 async def demote(
     client: Client,
     msg: Message,
-    texts: list,
     responce: Message
-):
+) -> str:
     admins: list[ChatMember] = await chats.list_chat_admins(
         client = client,
         chat = msg.chat,
@@ -121,22 +155,20 @@ async def demote(
                     is_anonymous = False,
                 ),
             )
-            texts.append(
-                f'too many admins, demoting {mention(admin.user)}'
+            message = f'too many admins, demoting {mention(admin.user)}'
+            await responce.edit_text(
+                message
             )
-            await responce.edit_text('\n\n'.join(texts))
-            return True
+            return message
         except pyrogram.errors.UserCreator:
             continue
-        except Exception as e:
-            texts.append(
-                f'failed to demote {mention(admin.user)}: {e}'
+        except Exception:
+            print(
+                f'failed to demote {admin.user.first_name}'
             )
-            await responce.edit_text('\n\n'.join(texts))
             continue
-    texts.append(
+    await responce.edit_text(
         f'too many admins, no admin available to demote'
     )
-    await responce.edit_text('\n\n'.join(texts))
-    return False
+    return ''
 
