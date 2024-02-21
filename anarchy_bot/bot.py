@@ -34,8 +34,8 @@ class Votes:
         client: Client,
     ) -> None:
         self.user_to_mute: User = user_to_mute
-        self.plus_list: list[User] = []
-        self.minus_list: list[User] = []
+        self.plus_list: dict[int, User] = {}
+        self.minus_list: dict[int, User] = {}
         self.language: User = user_who_votes
         self.msg: Message | None = None
         self.client: Client = client
@@ -46,12 +46,12 @@ class Votes:
         cb: CallbackQuery | None,
     ):
         while user_who_votes in self.plus_list:
-            self.plus_list.remove(user_who_votes)
+            self.plus_list.pop(user_who_votes.id)
         if user_who_votes in self.minus_list:
             if cb:
                 await cb.answer('already voted for +30 minutes')
         else:
-            self.minus_list.append(user_who_votes)
+            self.minus_list[user_who_votes.id] = user_who_votes
             if cb:
                 await cb.answer('voted for +30 minutes')
 
@@ -61,12 +61,12 @@ class Votes:
         cb: CallbackQuery | None,
     ):
         while user_who_votes in self.minus_list:
-            self.minus_list.remove(user_who_votes)
+            self.minus_list.pop(user_who_votes.id)
         if user_who_votes in self.plus_list:
             if cb:
                 await cb.answer('already voted for +30 minutes')
         else:
-            self.plus_list.append(user_who_votes)
+            self.plus_list[user_who_votes.id] = user_who_votes
             if cb:
                 await cb.answer('voted for -30 minutes')
 
@@ -80,7 +80,6 @@ class Votes:
             await self.msg.edit(**updated)
         except:
             pass
-
 
     async def reply(
         self,
@@ -205,11 +204,11 @@ class Votes:
         text = ''
         if self.plus_list:
             text += '\n\nvotes for mute:'
-            for user in self.plus_list:
+            for user in self.plus_list.values():
                 text += '\n' + mention(user)
         if self.minus_list:
             text += '\n\nvotes against mute:'
-            for user in self.minus_list:
+            for user in self.minus_list.values():
                 text += '\n' + mention(user)
         return text
 

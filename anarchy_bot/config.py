@@ -25,7 +25,7 @@ except Exception:
 
 
 app_name = 'anarchy_bot'
-app_version = '24.1.4'
+app_version = '24.1.5'
 c = rich.console.Console()
 app_path = Path(
     __file__
