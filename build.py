@@ -2,9 +2,10 @@
 # license is gnu agpl 3 - gnu.org/licenses/agpl-3.0.en.html
 
 from pathlib import Path
+import subprocess
 import shutil
 import toml
-import os
+import sys
 from setup import (
     app_name,
 )
@@ -68,9 +69,12 @@ shutil.rmtree(
     dist_path,
     ignore_errors = True,
 )
-os.system('python -m hatchling build')
-for file in dist_path.iterdir():
-    if file.suffix != '.whl':
-        file.unlink()
-os.system('python -m prettygit')
+subprocess.run(
+    [sys.executable, '-m', 'hatchling', 'build'],
+    check=True,
+)
+subprocess.run(
+    [sys.executable, '-m', 'twine', 'upload', 'dist/*'],
+    check=True,
+)
 
