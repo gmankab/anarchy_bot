@@ -22,11 +22,23 @@ async def becomeadmin(
 ):
     splitted = msg.text.split(' ', 1)
     if len(splitted) == 1:
-        responce: Message = await msg.reply(
-            'you must specify your title after /becomeadmin\n\nexample: /becomeadmin bebra'
+        admins: list[ChatMember] = await chats.list_chat_admins(
+            client = client,
+            chat = msg.chat,
         )
-        return
-    tag = splitted[-1][:16]
+        tag = ''
+        while admins:
+            admin: ChatMember = random.choice(admins)
+            tag: str = admin.custom_title
+            if tag:
+                break
+            else:
+                admins.remove(admin)
+                continue
+        if not tag:
+            tag = 'admin'
+    else:
+        tag = splitted[-1][:16]
     if msg.chat.type != pyrogram.enums.ChatType.SUPERGROUP:
         responce: Message = await msg.reply(
             'wrong chat type, expected supergroup, got ' + str(msg.chat.type).lower()
