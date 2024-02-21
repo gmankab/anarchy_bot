@@ -21,9 +21,6 @@ from common import (
 )
 
 
-c.log(f'imported [deep_sky_blue1]{__file__}')
-
-
 async def ask_to_set_logs_chat_msg(
     client: Client,
     msg: Message,

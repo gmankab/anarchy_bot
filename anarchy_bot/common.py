@@ -2,20 +2,20 @@
 
 import datetime
 import rich.console
+import pyrogram.enums
+import pyrogram.errors
 import gmanka_yml as yml
 import pyrogram as pg
-import datetime
-import pyrogram.enums
-from pathlib import Path
 from lang import t
+from pathlib import Path
 from pyrogram import errors
 from pyrogram.client import Client
 from pyrogram.types import (
     InlineKeyboardButton as Ikb,
     InlineKeyboardMarkup as Ikm,
-    InlineQuery,
     CallbackQuery,
     ChatPreview,
+    InlineQuery,
     ChatMember,
     Message,
     User,
@@ -28,9 +28,6 @@ from config import (
     get,
     c,
 )
-
-
-c.log(f'imported [deep_sky_blue1]{__file__}')
 
 
 class Chats:

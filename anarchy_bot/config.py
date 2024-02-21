@@ -27,7 +27,6 @@ except Exception:
 app_name = 'anarchy_bot'
 app_version = '23.1.6'
 c = rich.console.Console()
-c.log(f'imported [deep_sky_blue1]{__file__}')
 app_path = Path(
     __file__
 ).parent.parent.resolve()
@@ -146,7 +145,7 @@ class Config:
             default = '',
             expected_type = str,
         )
-        self.token: str = get(
+        self.token: str | None = get(
             data = data,
             item = 'token',
             default = '',

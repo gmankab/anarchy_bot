@@ -30,9 +30,6 @@ from common import (
 )
 
 
-c.log(f'imported [deep_sky_blue1]{__file__}')
-
-
 async def idle():
     while True:
         await asyncio.sleep(1)

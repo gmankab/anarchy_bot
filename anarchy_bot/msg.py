@@ -26,9 +26,6 @@ from chats import (
 )
 
 
-c.log(f'imported [deep_sky_blue1]{__file__}')
-
-
 async def catched_on_message(
     client: Client,
     msg: Message,

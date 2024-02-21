@@ -26,9 +26,6 @@ from common import (
 )
 
 
-c.log(f'imported [deep_sky_blue1]{__file__}')
-
-
 async def pages_button(
     client: Client,
     cb: CallbackQuery,
@@ -186,11 +183,6 @@ async def list_bot_chats_button(
             chat = await client.get_chat(chat_id)
         except:
             chat = None
-            await cb.message.reply_document(
-                document = write_error(),
-                caption = f'failed get chat {chat_id}',
-                quote = True,
-            )
         if chat:
             if isinstance(
                 chat,

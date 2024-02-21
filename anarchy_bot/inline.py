@@ -26,9 +26,6 @@ from common import (
 )
 
 
-c.log(f'imported [deep_sky_blue1]{__file__}')
-
-
 async def catched_on_inline(
     client: Client,
     inline: InlineQuery,
