@@ -126,6 +126,10 @@ class Votes:
             await self.msg.edit_text(
                 t('permissions_msg', self.language)
             )
+        except pyrogram.errors.UserAdminInvalid:
+            await self.msg.edit_text(
+                'you are bigger admin than me'
+            )
         except pyrogram.errors.RightForbidden:
             await self.msg.edit_text(
                 'you are bigger admin than me'
@@ -334,6 +338,10 @@ async def promote_to_admin(
                 t('permissions_msg', user)
             )
             return ''
+        except pyrogram.errors.UserAdminInvalid:
+            await responce.edit_text(
+                'you are bigger admin than me'
+            )
         except pyrogram.errors.RightForbidden:
             await responce.edit_text(
                 'you are bigger admin than me'
