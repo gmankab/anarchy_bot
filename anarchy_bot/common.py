@@ -30,6 +30,10 @@ from config import (
 )
 
 
+class IgnoreError(Exception):
+    pass
+
+
 class Chats:
     def __init__(
         self,
@@ -41,6 +45,7 @@ class Chats:
             default = {},
             expected_type = dict,
         )
+        self.mute_votes: dict = {}
         users_list: list[int] = get(
             data = data,
             item = 'users',
@@ -392,6 +397,15 @@ def mention(
         return f'@{user.username}'
     else:
         return user.mention()
+
+
+def mention_nolink(
+    user: User,
+) -> str:
+    if user.username:
+        return f'@{user.username}'
+    else:
+        return user.first_name
 
 
 async def bad_button(

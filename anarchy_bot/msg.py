@@ -3,17 +3,20 @@
 import pyrogram as pg
 import pyrogram.errors
 from lang import t
-from bot import becomeadmin
 from pyrogram.client import Client
 from pyrogram.types import (
     Message,
 )
+from bot import (
+    becomeadmin,
+    mute,
+)
 from config import(
     yes_no,
     config,
-    c,
 )
 from common import (
+    IgnoreError,
     filter_admin,
     write_error,
     get_buttons,
@@ -38,6 +41,8 @@ async def catched_on_message(
         )
     except pyrogram.errors.FloodWait as e:
         print(f'got fooldwait for {e.value} seconds')
+        return
+    except IgnoreError:
         return
     except Exception:
         error_path = write_error()
@@ -73,6 +78,8 @@ async def on_message(
         '/help': help_msg,
         '/becomeadmin': becomeadmin,
         '/ba': becomeadmin,
+        '/m': mute,
+        '/mute': mute,
     }
     admins = {
         '/setlogs': setlogs_msg,
@@ -127,7 +134,7 @@ async def on_message(
 
 
 async def help_msg(
-    client: Client,
+    _: Client,
     msg: Message,
 ):
     await msg.reply(

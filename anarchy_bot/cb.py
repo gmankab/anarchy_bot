@@ -7,6 +7,11 @@ from pyrogram.types import (
     InlineKeyboardMarkup as Ikm,
     CallbackQuery,
 )
+from bot import (
+    mute_done_button,
+    mute_minus_button,
+    mute_plus_button,
+)
 from config import (
     config,
     c,
@@ -60,10 +65,12 @@ async def on_cb(
         'request_admin_rights_button': request_admin_rights_button,
         'back_main_button': back_main_button,
         'main_menu_button': main_menu_button,
-        'buy_pass_button': not_coded_yet_button,
     }
     users_in = {
         'promote_to_admin_button_': promote_to_admin_button,
+        'mute_minus_button_': mute_minus_button,
+        'mute_plus_button_': mute_plus_button,
+        'mute_done_button_': mute_done_button,
     }
     answers = {
         'first_page_button': 'first_page_cb',
@@ -130,7 +137,7 @@ async def on_cb(
 
 
 async def back_main_button(
-    client: Client,
+    _: Client,
     cb: CallbackQuery,
 ) -> None:
     await cb.edit_message_text(
@@ -139,7 +146,7 @@ async def back_main_button(
 
 
 async def admin_panel_button(
-    client: Client,
+    _: Client,
     cb: CallbackQuery,
 ) -> None:
     buttons = [
@@ -163,7 +170,7 @@ async def admin_panel_button(
 
 
 async def request_admin_rights_button(
-    client: Client,
+    _: Client,
     cb: CallbackQuery,
 ) -> None:
     if cb.from_user.id in config.admins:
@@ -227,7 +234,7 @@ async def promote_to_admin_button(
 
 
 async def not_coded_yet_button(
-    client: Client,
+    _: Client,
     cb: CallbackQuery,
 ) -> None:
     await cb.answer(
@@ -236,7 +243,7 @@ async def not_coded_yet_button(
 
 
 async def main_menu_button(
-    client: Client,
+    _: Client,
     cb: CallbackQuery,
 ) -> None:
     chats.users_dict[cb.from_user.id] = None
