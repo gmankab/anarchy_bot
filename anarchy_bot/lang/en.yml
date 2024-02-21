@@ -3,6 +3,7 @@ help_msg: |
   welcome to @gmanka's anarchy bot
   
   /h | /help - get this command
+  /m | /mute - mute someone
   /ba | /becomeadmin - promotes you to admin
   also you can set custom tag after /ba
 
@@ -14,6 +15,24 @@ owner_commands_msg: |
 
   /setlogs - set this chat as logs chat
   """
+mute_msg: |
+  """
+  mute {user}?
+  first button increases mute duration
+  second button reduces mute duration
+  """
+permisssions_msg: |
+  """
+  i needs following permissions
+  - change group info
+  - ban users
+  - add members
+  - add new admins
+  """
+mute_plus_button:
+  🔇 + 30 minutes mute
+mute_minus_button:
+  🔊 - 30 minutes mute
 admin_panel_button:
   🥔 admin panel
 admin_panel_msg:
@@ -44,6 +63,8 @@ back_main_button:
   ◄ back to main menu 🏠
 main_menu_button:
   🏠 main menu
+mute_done_button:
+  ✅ done
 done_button:
   ✅ done
 yes_button:
