@@ -1,6 +1,7 @@
 # license is gnu agpl 3 - gnu.org/licenses/agpl-3.0.en.html
 
 import pyrogram as pg
+import pyrogram.errors
 from lang import t
 from bot import becomeadmin
 from pyrogram.client import Client
@@ -35,6 +36,9 @@ async def catched_on_message(
             client,
             msg,
         )
+    except pyrogram.errors.FloodWait as e:
+        print(f'got fooldwait for {e.value} seconds')
+        return
     except Exception:
         error_path = write_error()
         log_msg = await l.log(
