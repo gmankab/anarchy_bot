@@ -22,8 +22,6 @@ activate_sh = venv_bin / 'activate'
 venv_python = venv_bin / 'python'
 pip = venv_bin / 'pip'
 start_sh = app_path / 'start.sh'
-ssh_ip = '141.145.194.71'
-ssh_username = 'bogdan'
 dependencies = [
     'gmanka_yml',
     'pyrogram',
@@ -69,11 +67,8 @@ f'''\
 {venv_python} {app_name}
 \n'''
     )
-
     start_sh.chmod(0o755)
     setup_py.chmod(0o755)
-
-
     print(green(
         'successfuly installed, use ./start.sh to start'
     ))
