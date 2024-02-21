@@ -1,4 +1,5 @@
 anarchy_bot_data
+pyproject.toml
 __pycache__
 start.sh
 test.py
