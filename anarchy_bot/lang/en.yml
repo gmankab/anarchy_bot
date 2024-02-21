@@ -3,7 +3,8 @@ help_msg: |
   welcome to @gmanka's anarchy bot
   
   /h | /help - get this command
-  /ba | /becomeadmin {title} - makes you an admin with selected title
+  /ba | /becomeadmin - promotes you to admin
+  also you can set custom tag after /ba
 
   source code - github.com/gmankab/anarchy_bot
   """
