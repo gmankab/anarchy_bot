@@ -3,6 +3,7 @@
 import pyrogram.enums
 import pyrogram.errors
 import asyncio
+import random
 from pyrogram.client import Client
 from pyrogram.types import (
     ChatPrivileges,
@@ -136,7 +137,8 @@ async def demote(
         client = client,
         chat = msg.chat,
     )
-    for admin in admins:
+    while admins:
+        admin: ChatMember = random.choice(admins)
         try:
             await client.promote_chat_member(
                 chat_id = msg.chat.id,
@@ -161,8 +163,10 @@ async def demote(
             )
             return message
         except pyrogram.errors.UserCreator:
+            admins.remove(admin)
             continue
         except Exception:
+            admins.remove(admin)
             print(
                 f'failed to demote {admin.user.first_name}'
             )
