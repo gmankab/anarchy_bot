@@ -34,8 +34,8 @@ class Votes:
         client: Client,
     ) -> None:
         self.user_to_mute: User = user_to_mute
-        self.plus_list: dict[int, User] = {}
-        self.minus_list: dict[int, User] = {}
+        self.plus_dict: dict[int, User] = {}
+        self.minus_dict: dict[int, User] = {}
         self.language: User = user_who_votes
         self.msg: Message | None = None
         self.client: Client = client
@@ -45,13 +45,13 @@ class Votes:
         user_who_votes: User,
         cb: CallbackQuery | None,
     ):
-        while user_who_votes in self.plus_list:
-            self.plus_list.pop(user_who_votes.id)
-        if user_who_votes in self.minus_list:
+        while user_who_votes.id in self.plus_dict:
+            self.plus_dict.pop(user_who_votes.id)
+        if user_who_votes in self.minus_dict:
             if cb:
                 await cb.answer('already voted for +30 minutes')
         else:
-            self.minus_list[user_who_votes.id] = user_who_votes
+            self.minus_dict[user_who_votes.id] = user_who_votes
             if cb:
                 await cb.answer('voted for +30 minutes')
 
@@ -60,13 +60,13 @@ class Votes:
         user_who_votes: User,
         cb: CallbackQuery | None,
     ):
-        while user_who_votes in self.minus_list:
-            self.minus_list.pop(user_who_votes.id)
-        if user_who_votes in self.plus_list:
+        while user_who_votes.id in self.minus_dict:
+            self.minus_dict.pop(user_who_votes.id)
+        if user_who_votes in self.plus_dict:
             if cb:
                 await cb.answer('already voted for +30 minutes')
         else:
-            self.plus_list[user_who_votes.id] = user_who_votes
+            self.plus_dict[user_who_votes.id] = user_who_votes
             if cb:
                 await cb.answer('voted for -30 minutes')
 
@@ -93,7 +93,7 @@ class Votes:
     ):
         if not self.msg:
             raise ValueError
-        count = len(self.plus_list) - len(self.minus_list)
+        count = len(self.plus_dict) - len(self.minus_dict)
         if count >= 2:
             await self.mute(count)
         else:
@@ -202,13 +202,13 @@ class Votes:
         self,
     ) -> str:
         text = ''
-        if self.plus_list:
+        if self.plus_dict:
             text += '\n\nvotes for mute:'
-            for user in self.plus_list.values():
+            for user in self.plus_dict.values():
                 text += '\n' + mention(user)
-        if self.minus_list:
+        if self.minus_dict:
             text += '\n\nvotes against mute:'
-            for user in self.minus_list.values():
+            for user in self.minus_dict.values():
                 text += '\n' + mention(user)
         return text
 
