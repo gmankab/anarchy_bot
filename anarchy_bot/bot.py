@@ -47,7 +47,7 @@ class Votes:
     ):
         while user_who_votes.id in self.plus_dict:
             self.plus_dict.pop(user_who_votes.id)
-        if user_who_votes in self.minus_dict:
+        if user_who_votes.id in self.minus_dict:
             if cb:
                 await cb.answer('already voted for +30 minutes')
         else:
@@ -62,7 +62,7 @@ class Votes:
     ):
         while user_who_votes.id in self.minus_dict:
             self.minus_dict.pop(user_who_votes.id)
-        if user_who_votes in self.plus_dict:
+        if user_who_votes.id in self.plus_dict:
             if cb:
                 await cb.answer('already voted for +30 minutes')
         else:
