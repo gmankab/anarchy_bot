@@ -90,11 +90,11 @@ async def on_message(
         return
     if not msg.text:
         return
-    if not config.owner:
-        await set_owner(
-            msg,
-        )
     if msg.chat.type == pg.enums.ChatType.PRIVATE:
+        if not config.owner:
+            await set_owner(
+                msg,
+            )
         await chats.remember_user(msg.from_user.id)
         action = chats.users_dict[msg.from_user.id]
         if action is None:
