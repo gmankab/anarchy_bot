@@ -23,6 +23,7 @@ app_path = Path(
 ).parent.resolve()
 pypr_path = app_path / 'pyproject.toml'
 dist_path = app_path / 'dist'
+description = 'true anarchy in telegram chats'
 
 pypr_data = {
     'build-system': {
@@ -39,7 +40,7 @@ pypr_data = {
                 'email': 'gmankab@gmail.com',
             },
         ],
-        'description': 'telegram bot that can add users to minecraft whitelist',
+        'description': description,
         'readme': 'readme.md',
         'requires-python': '>=3.10',
         'classifiers': [
