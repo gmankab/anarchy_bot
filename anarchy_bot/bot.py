@@ -429,6 +429,11 @@ async def mute(
             'wrong chat type, expected supergroup, got ' + str(msg.chat.type).lower()
         )
         return
+    if not msg.from_user:
+        await msg.reply(
+            'you must send message as user, not as channel or chat'
+        )
+        return
     if not msg.reply_to_message:
         await msg.reply(
             'you should reply to someone\'s message'
@@ -507,6 +512,10 @@ async def mute_plus_button(
     _: Client,
     cb: CallbackQuery,
 ) -> None:
+    if not cb.from_user:
+        await cb.answer(
+            'channels and chats can\'t vote'
+        )
     votes = await get_votes_from_cb(cb)
     await votes.vote_plus(
         user_who_votes=cb.from_user,
@@ -519,6 +528,11 @@ async def mute_minus_button(
     _: Client,
     cb: CallbackQuery,
 ) -> None:
+    if not cb.from_user:
+        await cb.answer(
+            'channels and chats can\'t vote'
+        )
+        return
     votes = await get_votes_from_cb(cb)
     await votes.vote_minus(
         user_who_votes=cb.from_user,
@@ -531,6 +545,11 @@ async def mute_done_button(
     _: Client,
     cb: CallbackQuery,
 ) -> None:
+    if not cb.from_user:
+        await cb.answer(
+            'channels and chats can\'t press this button'
+        )
+        return
     permitted = cb.message.reply_to_message.from_user
     if cb.from_user.id != permitted.id:
         await cb.answer(f'this button for {mention_nolink(permitted)}')
