@@ -122,25 +122,26 @@ class Votes:
                 **kwargs,
             )
         except pyrogram.errors.ChatAdminRequired:
-            await self.msg.edit_text(
-                t('permissions_msg', self.language)
+            await self.msg.edit(
+                text=t('permissions_msg', self.language),
             )
         except pyrogram.errors.UserAdminInvalid:
-            await self.msg.edit_text(
-                'you are bigger admin than me'
+            await self.msg.edit(
+                text=f'{mention(self.user_to_mute)} is bigger admin than me',
             )
         except pyrogram.errors.RightForbidden:
-            await self.msg.edit_text(
-                'you are bigger admin than me'
+            await self.msg.edit(
+                text=f'{mention(self.user_to_mute)} is bigger admin than me',
             )
         except pyrogram.errors.UserCreator:
-            await self.msg.edit_text(
-                'you are chat owner'
+            await self.msg.edit(
+                text=f'{mention(self.user_to_mute)} is chat owner',
             )
         else:
             await self.msg.edit(
-                text
+                text=text,
             )
+        self.msg.reply_markup
         chat_id = self.msg.chat.id
         messages_dict = chats.mute_votes.get(chat_id)
         if messages_dict is None:
