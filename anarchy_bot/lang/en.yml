@@ -4,6 +4,7 @@ help_msg: |
   
   /h | /help - get this command
   /m | /mute - mute someone
+  /sm | /selfmute - mute yourself
   /ba | /becomeadmin - promotes you to admin
   also you can set custom tag after /ba
 

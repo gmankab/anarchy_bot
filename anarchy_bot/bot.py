@@ -27,6 +27,28 @@ from common import (
 )
 
 
+permissions_unmuted = ChatPermissions(
+    can_send_messages=True,
+    can_send_media_messages=True,
+    can_send_other_messages=True,
+    can_send_polls=True,
+    can_add_web_page_previews=True,
+    can_change_info=True,
+    can_invite_users=True,
+    can_pin_messages=True,
+)
+permissions_muted = ChatPermissions(
+    can_send_messages=False,
+    can_send_media_messages=False,
+    can_send_other_messages=False,
+    can_send_polls=False,
+    can_add_web_page_previews=False,
+    can_change_info=False,
+    can_invite_users=False,
+    can_pin_messages=False,
+)
+
+
 class Votes:
     def __init__(
         self,
@@ -117,24 +139,13 @@ class Votes:
     ):
         if not self.msg_to_edit:
             raise ValueError
-        permissions = ChatPermissions(
-            can_send_messages=True,
-            can_send_media_messages=True,
-            can_send_other_messages=True,
-            can_send_polls=True,
-            can_add_web_page_previews=True,
-            can_change_info=True,
-            can_invite_users=True,
-            can_pin_messages=True,
-        )
         await change_permissions_catched(
             client=self.client,
-            chat_id=self.msg_to_edit.chat.id,
             initiator=self.initiator,
             user_to_mute=self.user_to_mute,
             msg_to_edit=self.msg_to_edit,
             success_msg=f'{mention(self.user_to_mute)} was unmuted, mute votes must exceed unmute by 2 for successfull mute' + self.get_voters(),
-            permissions=permissions,
+            permissions=permissions_unmuted,
         )
 
     async def mute(
@@ -143,25 +154,14 @@ class Votes:
     ):
         if not self.msg_to_edit:
             raise ValueError
-        permissions = ChatPermissions(
-            can_send_messages=False,
-            can_send_media_messages=False,
-            can_send_other_messages=False,
-            can_send_polls=False,
-            can_add_web_page_previews=False,
-            can_change_info=False,
-            can_invite_users=False,
-            can_pin_messages=False,
-        )
         minutes = count * 30
         await change_permissions_catched(
             client=self.client,
-            chat_id=self.msg_to_edit.chat.id,
             initiator=self.initiator,
             user_to_mute=self.user_to_mute,
             msg_to_edit=self.msg_to_edit,
             success_msg=f'{mention(self.user_to_mute)} was muted for {minutes} minutes' + self.get_voters(),
-            permissions=permissions,
+            permissions=permissions_muted,
             until_date=datetime.datetime.now() + datetime.timedelta(
                 minutes = minutes,
             ),
@@ -554,3 +554,24 @@ async def change_permissions_catched(
             text=success_msg,
         )
 
+async def selfmute(
+    client: Client,
+    msg: Message,
+) -> None:
+    if await is_wrong_msg(msg):
+        return
+    msg_to_edit = await msg.reply(
+        'trying to mute you'
+    )
+    await change_permissions_catched(
+        client=client,
+        initiator=msg.from_user,
+        user_to_mute=msg.from_user,
+        msg_to_edit=msg_to_edit,
+        success_msg=f'succesfully minuted you for 1 hour',
+        permissions=permissions_muted,
+        until_date=datetime.datetime.now() + datetime.timedelta(
+            hours=1,
+        ),
+    )
+    
