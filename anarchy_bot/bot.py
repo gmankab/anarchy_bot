@@ -20,6 +20,7 @@ from pyrogram.types import (
 from common import (
     IgnoreError,
     mention_nolink,
+    is_wrong_msg,
     get_end_int,
     mention,
     chats,
@@ -30,14 +31,14 @@ class Votes:
     def __init__(
         self,
         user_to_mute: User,
-        user_who_votes: User,
+        initiator: User,
         client: Client,
     ) -> None:
         self.user_to_mute: User = user_to_mute
         self.plus_dict: dict[int, User] = {}
         self.minus_dict: dict[int, User] = {}
-        self.language: User = user_who_votes
-        self.msg: Message | None = None
+        self.initiator: User = initiator
+        self.msg_to_edit: Message | None = None
         self.client: Client = client
 
     async def vote_minus(
@@ -73,11 +74,11 @@ class Votes:
     async def update(
         self,
     ):
-        if not self.msg:
+        if not self.msg_to_edit:
             raise ValueError
         updated = await self.get_updated_message()
         try:
-            await self.msg.edit(**updated)
+            await self.msg_to_edit.edit(**updated)
         except:
             pass
 
@@ -86,12 +87,12 @@ class Votes:
         msg_to_reply: Message
     ):
         updated_message = await self.get_updated_message()
-        self.msg = await msg_to_reply.reply(**updated_message)
+        self.msg_to_edit = await msg_to_reply.reply(**updated_message)
 
     async def done(
         self,
     ):
-        if not self.msg:
+        if not self.msg_to_edit:
             raise ValueError
         count = len(self.plus_dict) - len(self.minus_dict)
         if count >= 2:
@@ -99,50 +100,7 @@ class Votes:
         else:
             await self.unmute()
 
-
-    async def restrict_chat_member(
-        self,
-        text: str,
-        permissions: ChatPermissions,
-        until_date: datetime.datetime | None = None,
-    ):
-        if until_date:
-            kwargs = {
-                'until_date': until_date,
-            }
-        else:
-            kwargs = {}
-        if not self.msg:
-            raise TypeError()
-        try:
-            await self.client.restrict_chat_member(
-                chat_id=self.msg.chat.id,
-                user_id=self.user_to_mute.id,
-                permissions=permissions,
-                **kwargs,
-            )
-        except pyrogram.errors.ChatAdminRequired:
-            await self.msg.edit(
-                text=t('permissions_msg', self.language),
-            )
-        except pyrogram.errors.UserAdminInvalid:
-            await self.msg.edit(
-                text=f'{mention(self.user_to_mute)} is bigger admin than me',
-            )
-        except pyrogram.errors.RightForbidden:
-            await self.msg.edit(
-                text=f'{mention(self.user_to_mute)} is bigger admin than me',
-            )
-        except pyrogram.errors.UserCreator:
-            await self.msg.edit(
-                text=f'{mention(self.user_to_mute)} is chat owner',
-            )
-        else:
-            await self.msg.edit(
-                text=text,
-            )
-        self.msg.reply_markup
-        chat_id = self.msg.chat.id
+        chat_id = self.msg_to_edit.chat.id
         messages_dict = chats.mute_votes.get(chat_id)
         if messages_dict is None:
             keys = list(chats.mute_votes.keys())
@@ -157,7 +115,7 @@ class Votes:
     async def unmute(
         self,
     ):
-        if not self.msg:
+        if not self.msg_to_edit:
             raise ValueError
         permissions = ChatPermissions(
             can_send_messages=True,
@@ -169,16 +127,21 @@ class Votes:
             can_invite_users=True,
             can_pin_messages=True,
         )
-        await self.restrict_chat_member(
+        await change_permissions_catched(
+            client=self.client,
+            chat_id=self.msg_to_edit.chat.id,
+            initiator=self.initiator,
+            user_to_mute=self.user_to_mute,
+            msg_to_edit=self.msg_to_edit,
+            success_msg=f'{mention(self.user_to_mute)} was unmuted, mute votes must exceed unmute by 2 for successfull mute' + self.get_voters(),
             permissions=permissions,
-            text=f'{mention(self.user_to_mute)} was unmuted, mute votes must exceed unmute by 2 for successfull mute' + self.get_voters(),
         )
 
     async def mute(
         self,
         count: int,
     ):
-        if not self.msg:
+        if not self.msg_to_edit:
             raise ValueError
         permissions = ChatPermissions(
             can_send_messages=False,
@@ -191,9 +154,14 @@ class Votes:
             can_pin_messages=False,
         )
         minutes = count * 30
-        await self.restrict_chat_member(
+        await change_permissions_catched(
+            client=self.client,
+            chat_id=self.msg_to_edit.chat.id,
+            initiator=self.initiator,
+            user_to_mute=self.user_to_mute,
+            msg_to_edit=self.msg_to_edit,
+            success_msg=f'{mention(self.user_to_mute)} was muted for {minutes} minutes' + self.get_voters(),
             permissions=permissions,
-            text=f'{mention(self.user_to_mute)} was muted for {minutes} minutes' + self.get_voters(),
             until_date=datetime.datetime.now() + datetime.timedelta(
                 minutes = minutes,
             ),
@@ -218,21 +186,21 @@ class Votes:
     ) -> dict:
         text = t(
             'mute_msg',
-            self.language,
+            self.initiator,
         ).format(
             user=mention(self.user_to_mute)
         ) + self.get_voters()
         buttons = [
             [Ikb(
-                t('mute_plus_button', self.language),
+                t('mute_plus_button', self.initiator),
                 f'mute_plus_button_{self.user_to_mute.id}',
             )],
             [Ikb(
-                t('mute_minus_button', self.language),
+                t('mute_minus_button', self.initiator),
                 f'mute_minus_button_{self.user_to_mute.id}',
             )],
             [Ikb(
-                t('mute_done_button', self.language),
+                t('mute_done_button', self.initiator),
                 f'mute_done_button_{self.user_to_mute.id}',
             )],
         ]
@@ -246,6 +214,8 @@ async def becomeadmin(
     client: Client,
     msg: Message,
 ) -> None:
+    if await is_wrong_msg(msg):
+        return
     splitted = msg.text.split(' ', 1)
     if len(splitted) == 1:
         admins: list[ChatMember] = await chats.list_chat_admins(
@@ -265,16 +235,6 @@ async def becomeadmin(
             tag = 'admin'
     else:
         tag = splitted[-1][:16]
-    if msg.chat.type != pyrogram.enums.ChatType.SUPERGROUP:
-        responce: Message = await msg.reply(
-            'wrong chat type, expected supergroup, got ' + str(msg.chat.type).lower()
-        )
-        return
-    if not msg.from_user:
-        responce: Message = await msg.reply(
-            'you must send message as user, not as channel or chat'
-        )
-        return
     responce: Message = await msg.reply(
         text = f'trying to make {mention(msg.from_user)} an admin...'
     )
@@ -425,15 +385,7 @@ async def mute(
     client: Client,
     msg: Message,
 ) -> None:
-    if msg.chat.type != pyrogram.enums.ChatType.SUPERGROUP:
-        await msg.reply(
-            'wrong chat type, expected supergroup, got ' + str(msg.chat.type).lower()
-        )
-        return
-    if not msg.from_user:
-        await msg.reply(
-            'you must send message as user, not as channel or chat'
-        )
+    if await is_wrong_msg(msg):
         return
     if not msg.reply_to_message:
         await msg.reply(
@@ -452,7 +404,7 @@ async def mute(
     if user_to_mute.id not in chats.mute_votes[chat_id]:
         chats.mute_votes[chat_id][user_to_mute.id] = Votes(
             user_to_mute=user_to_mute,
-            user_who_votes=msg.from_user,
+            initiator=msg.from_user,
             client=client,
         )
     votes = get_votes_from_int(
@@ -557,4 +509,48 @@ async def mute_done_button(
         return
     votes = await get_votes_from_cb(cb)
     await votes.done()
+
+
+async def change_permissions_catched(
+    client: Client,
+    initiator: User,
+    user_to_mute: User,
+    msg_to_edit: Message,
+    success_msg: str,
+    permissions: ChatPermissions,
+    until_date: datetime.datetime | None = None,
+):
+    if until_date:
+        kwargs = {
+            'until_date': until_date,
+        }
+    else:
+        kwargs = {}
+    try:
+        await client.restrict_chat_member(
+            chat_id=msg_to_edit.chat.id,
+            user_id=user_to_mute.id,
+            permissions=permissions,
+            **kwargs,
+        )
+    except pyrogram.errors.ChatAdminRequired:
+        await msg_to_edit.edit(
+            text=t('permissions_msg', initiator),
+        )
+    except pyrogram.errors.UserAdminInvalid:
+        await msg_to_edit.edit(
+            text=f'{mention(user_to_mute)} is bigger admin than me',
+        )
+    except pyrogram.errors.RightForbidden:
+        await msg_to_edit.edit(
+            text=f'{mention(user_to_mute)} is bigger admin than me',
+        )
+    except pyrogram.errors.UserCreator:
+        await msg_to_edit.edit(
+            text=f'{mention(user_to_mute)} is chat owner',
+        )
+    else:
+        await msg_to_edit.edit(
+            text=success_msg,
+        )
 

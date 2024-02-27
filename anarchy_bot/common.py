@@ -490,6 +490,22 @@ def hl(
     )
 
 
+async def is_wrong_msg(
+    msg: Message,
+) -> bool:
+    if msg.chat.type != pyrogram.enums.ChatType.SUPERGROUP:
+        await msg.reply(
+            'wrong chat type, expected supergroup, got ' + str(msg.chat.type).lower()
+        )
+        return True
+    if not msg.from_user:
+        await msg.reply(
+            'you must send message as user, not as channel or chat'
+        )
+        return True
+    return False
+
+
 chats = Chats(
     chats_path
 )
