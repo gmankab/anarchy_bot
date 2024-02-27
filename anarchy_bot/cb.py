@@ -17,6 +17,7 @@ from config import (
     c,
 )
 from common import (
+    IgnoreError,
     filter_admin,
     get_end_int,
     get_buttons,
@@ -50,6 +51,8 @@ async def catched_on_cb(
             client,
             cb,
         )
+    except IgnoreError:
+        return
     except Exception:
         await l.log(
             file = write_error()
