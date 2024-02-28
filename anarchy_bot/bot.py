@@ -613,7 +613,7 @@ async def selfmute(
     perms = Perms(
         initiator=msg.from_user,
         user_to_mute=msg.from_user,
-        success_msg=f'succesfully minuted you for 1 hour',
+        success_msg=f'succesfully muted you for 1 hour',
     )
     await perms.mute_and_edit(
         client=client,
