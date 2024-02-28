@@ -9,6 +9,7 @@ from pyrogram.types import (
 )
 from bot import (
     becomeadmin,
+    selfmute_del,
     selfmute,
     mute,
 )
@@ -95,11 +96,11 @@ async def on_message(
     if not msg.text:
         if restricted_emojis:
             if msg.dice:
-                await selfmute(client, msg)
+                await selfmute_del(client, msg)
         return
     for emoji in restricted_emojis:
         if msg.text == emoji:
-            return await selfmute(client, msg)
+            return await selfmute_del(client, msg)
     if msg.chat.type == pg.enums.ChatType.PRIVATE:
         if not config.owner:
             await set_owner(

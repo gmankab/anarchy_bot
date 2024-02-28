@@ -27,26 +27,135 @@ from common import (
 )
 
 
-permissions_unmuted = ChatPermissions(
-    can_send_messages=True,
-    can_send_media_messages=True,
-    can_send_other_messages=True,
-    can_send_polls=True,
-    can_add_web_page_previews=True,
-    can_change_info=True,
-    can_invite_users=True,
-    can_pin_messages=True,
-)
-permissions_muted = ChatPermissions(
-    can_send_messages=False,
-    can_send_media_messages=False,
-    can_send_other_messages=False,
-    can_send_polls=False,
-    can_add_web_page_previews=False,
-    can_change_info=False,
-    can_invite_users=False,
-    can_pin_messages=False,
-)
+class Perms():
+    def __init__(
+        self,
+        initiator: User,
+        user_to_mute: User,
+        success_msg: str,
+    ):
+        self.initiator = initiator
+        self.user_to_mute = user_to_mute
+        self.success_msg = success_msg
+        self.perms_unmuted = ChatPermissions(
+            can_send_messages=True,
+            can_send_media_messages=True,
+            can_send_other_messages=True,
+            can_send_polls=True,
+            can_add_web_page_previews=True,
+            can_change_info=True,
+            can_invite_users=True,
+            can_pin_messages=True,
+        )
+        self.perms_muted = ChatPermissions(
+            can_send_messages=False,
+            can_send_media_messages=False,
+            can_send_other_messages=False,
+            can_send_polls=False,
+            can_add_web_page_previews=False,
+            can_change_info=False,
+            can_invite_users=False,
+            can_pin_messages=False,
+        )
+
+    async def delete_or_reply(
+        self,
+        text,
+        msg: Message,
+    ):
+        await msg.reply(text)
+
+    async def unmute_and_edit(
+        self,
+        client: Client,
+        msg_to_edit: Message,
+    ):
+        change_permissions_method = client.restrict_chat_member(
+            chat_id=msg_to_edit.chat.id,
+            user_id=self.user_to_mute.id,
+            permissions=self.perms_unmuted,
+        )
+        error = await self.change_permissions(
+            change_permissions_method=change_permissions_method,
+        )
+        if error:
+            await msg_to_edit.edit(error)
+        else:
+            await msg_to_edit.edit(self.success_msg)
+
+    async def mute_and_edit(
+        self,
+        client: Client,
+        msg_to_edit: Message,
+        until_date: datetime.datetime,
+    ):
+        change_permissions_method = client.restrict_chat_member(
+            chat_id=msg_to_edit.chat.id,
+            user_id=self.user_to_mute.id,
+            permissions=self.perms_muted,
+            until_date=until_date,
+        )
+        error = await self.change_permissions(
+            change_permissions_method=change_permissions_method,
+        )
+        if error:
+            await msg_to_edit.edit(error)
+        else:
+            await msg_to_edit.edit(self.success_msg)
+
+    async def mute_or_del(
+        self,
+        client: Client,
+        msg_to_del: Message,
+        until_date: datetime.datetime,
+    ):
+        if not self.user_to_mute:
+            await self.delete(msg_to_del)
+            return
+        change_permissions_method = client.restrict_chat_member(
+            chat_id=msg_to_del.chat.id,
+            user_id=self.user_to_mute.id,
+            permissions=self.perms_muted,
+            until_date=until_date,
+        )
+        error = await self.change_permissions(
+            change_permissions_method=change_permissions_method,
+        )
+        if error:
+            await self.delete(msg_to_del)
+        else:
+            await msg_to_del.reply(self.success_msg)
+
+    async def delete(
+        self,
+        msg_to_del: Message,
+    ):
+        try:
+            await msg_to_del.delete()
+        except pyrogram.errors.MessageDeleteForbidden:
+            await msg_to_del.reply(t('permissions_msg', self.initiator))
+
+    async def change_permissions(
+        self,
+        change_permissions_method,
+    ) -> str:
+        '''
+        returns empty str on success, str with error on error
+        '''
+        try:
+            await change_permissions_method
+        except pyrogram.errors.ChatAdminRequired:
+                return t('permissions_msg', self.initiator)
+        except (
+            pyrogram.errors.UserAdminInvalid,
+            pyrogram.errors.RightForbidden,
+        ):
+            if self.initiator.id == self.user_to_mute.id:
+                return f'you are bigger admin than me'
+            else:
+                return f'{mention(self.user_to_mute)} is bigger admin than me'
+        else:
+            return ''
 
 
 class Votes:
@@ -116,11 +225,25 @@ class Votes:
     ):
         if not self.msg_to_edit:
             raise ValueError
+        perms = Perms(
+            initiator=self.initiator,
+            user_to_mute=self.user_to_mute,
+            success_msg=f'{mention(self.user_to_mute)} was unmuted, mute votes must exceed unmute by 2 for successfull mute' + self.get_voters(),
+        )
         count = len(self.plus_dict) - len(self.minus_dict)
         if count >= 2:
-            await self.mute(count)
+            await perms.mute_and_edit(
+                client=self.client,
+                msg_to_edit=self.msg_to_edit,
+                until_date=datetime.datetime.now() + datetime.timedelta(
+                    minutes = count * 30,
+                ),
+            )
         else:
-            await self.unmute()
+            await perms.unmute_and_edit(
+                client=self.client,
+                msg_to_edit=self.msg_to_edit,
+            )
 
         chat_id = self.msg_to_edit.chat.id
         messages_dict = chats.mute_votes.get(chat_id)
@@ -132,39 +255,6 @@ class Votes:
         messages_dict.pop(
             self.user_to_mute.id,
             None,
-        )
-
-    async def unmute(
-        self,
-    ):
-        if not self.msg_to_edit:
-            raise ValueError
-        await change_permissions_catched(
-            client=self.client,
-            initiator=self.initiator,
-            user_to_mute=self.user_to_mute,
-            msg_to_edit=self.msg_to_edit,
-            success_msg=f'{mention(self.user_to_mute)} was unmuted, mute votes must exceed unmute by 2 for successfull mute' + self.get_voters(),
-            permissions=permissions_unmuted,
-        )
-
-    async def mute(
-        self,
-        count: int,
-    ):
-        if not self.msg_to_edit:
-            raise ValueError
-        minutes = count * 30
-        await change_permissions_catched(
-            client=self.client,
-            initiator=self.initiator,
-            user_to_mute=self.user_to_mute,
-            msg_to_edit=self.msg_to_edit,
-            success_msg=f'{mention(self.user_to_mute)} was muted for {minutes} minutes' + self.get_voters(),
-            permissions=permissions_muted,
-            until_date=datetime.datetime.now() + datetime.timedelta(
-                minutes = minutes,
-            ),
         )
 
     def get_voters(
@@ -511,49 +601,6 @@ async def mute_done_button(
     await votes.done()
 
 
-async def change_permissions_catched(
-    client: Client,
-    initiator: User,
-    user_to_mute: User,
-    msg_to_edit: Message,
-    success_msg: str,
-    permissions: ChatPermissions,
-    until_date: datetime.datetime | None = None,
-):
-    if until_date:
-        kwargs = {
-            'until_date': until_date,
-        }
-    else:
-        kwargs = {}
-    try:
-        await client.restrict_chat_member(
-            chat_id=msg_to_edit.chat.id,
-            user_id=user_to_mute.id,
-            permissions=permissions,
-            **kwargs,
-        )
-    except pyrogram.errors.ChatAdminRequired:
-        await msg_to_edit.edit(
-            text=t('permissions_msg', initiator),
-        )
-    except pyrogram.errors.UserAdminInvalid:
-        await msg_to_edit.edit(
-            text=f'{mention(user_to_mute)} is bigger admin than me',
-        )
-    except pyrogram.errors.RightForbidden:
-        await msg_to_edit.edit(
-            text=f'{mention(user_to_mute)} is bigger admin than me',
-        )
-    except pyrogram.errors.UserCreator:
-        await msg_to_edit.edit(
-            text=f'{mention(user_to_mute)} is chat owner',
-        )
-    else:
-        await msg_to_edit.edit(
-            text=success_msg,
-        )
-
 async def selfmute(
     client: Client,
     msg: Message,
@@ -563,15 +610,39 @@ async def selfmute(
     msg_to_edit = await msg.reply(
         'trying to mute you'
     )
-    await change_permissions_catched(
-        client=client,
+    perms = Perms(
         initiator=msg.from_user,
         user_to_mute=msg.from_user,
-        msg_to_edit=msg_to_edit,
         success_msg=f'succesfully minuted you for 1 hour',
-        permissions=permissions_muted,
+    )
+    await perms.mute_and_edit(
+        client=client,
+        msg_to_edit=msg_to_edit,
         until_date=datetime.datetime.now() + datetime.timedelta(
             hours=1,
         ),
     )
     
+
+async def selfmute_del(
+    client: Client,
+    msg: Message,
+) -> None:
+    if msg.chat.type != pyrogram.enums.ChatType.SUPERGROUP:
+        await msg.reply(
+            'wrong chat type, expected supergroup, got ' + str(msg.chat.type).lower()
+        )
+        return
+    perms = Perms(
+        initiator=msg.from_user,
+        user_to_mute=msg.from_user,
+        success_msg=f'succesfully minuted you for 1 hour',
+    )
+    await perms.mute_or_del(
+        client=client,
+        msg_to_del=msg,
+        until_date=datetime.datetime.now() + datetime.timedelta(
+            hours=1,
+        ),
+    )
+
