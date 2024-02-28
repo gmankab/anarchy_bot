@@ -29,6 +29,7 @@ permissions_msg: |
   - ban users
   - add members
   - add new admins
+  - delete messages
   """
 mute_plus_button:
   🔇 + 30 minutes mute
