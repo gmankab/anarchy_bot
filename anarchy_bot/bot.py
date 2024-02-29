@@ -32,11 +32,9 @@ class Perms():
         self,
         initiator: User,
         user_to_mute: User,
-        success_msg: str,
     ):
         self.initiator = initiator
         self.user_to_mute = user_to_mute
-        self.success_msg = success_msg
         self.perms_unmuted = ChatPermissions(
             can_send_messages=True,
             can_send_media_messages=True,
@@ -45,7 +43,7 @@ class Perms():
             can_add_web_page_previews=True,
             can_change_info=True,
             can_invite_users=True,
-            can_pin_messages=True,
+           can_pin_messages=True,
         )
         self.perms_muted = ChatPermissions(
             can_send_messages=False,
@@ -58,15 +56,9 @@ class Perms():
             can_pin_messages=False,
         )
 
-    async def delete_or_reply(
-        self,
-        text,
-        msg: Message,
-    ):
-        await msg.reply(text)
-
     async def unmute_and_edit(
         self,
+        text: str,
         client: Client,
         msg_to_edit: Message,
     ):
@@ -81,10 +73,11 @@ class Perms():
         if error:
             await msg_to_edit.edit(error)
         else:
-            await msg_to_edit.edit(self.success_msg)
+            await msg_to_edit.edit(text)
 
     async def mute_and_edit(
         self,
+        text: str,
         client: Client,
         msg_to_edit: Message,
         until_date: datetime.datetime,
@@ -101,10 +94,11 @@ class Perms():
         if error:
             await msg_to_edit.edit(error)
         else:
-            await msg_to_edit.edit(self.success_msg)
+            await msg_to_edit.edit(text)
 
     async def mute_or_del(
         self,
+        text: str,
         client: Client,
         msg_to_del: Message,
         until_date: datetime.datetime,
@@ -124,7 +118,7 @@ class Perms():
         if error:
             await self.delete(msg_to_del)
         else:
-            await msg_to_del.reply(self.success_msg)
+            await msg_to_del.reply(text)
 
     async def delete(
         self,
@@ -228,19 +222,21 @@ class Votes:
         perms = Perms(
             initiator=self.initiator,
             user_to_mute=self.user_to_mute,
-            success_msg=f'{mention(self.user_to_mute)} was unmuted, mute votes must exceed unmute by 2 for successfull mute' + self.get_voters(),
         )
         count = len(self.plus_dict) - len(self.minus_dict)
         if count >= 2:
+            minutes = count * 30
             await perms.mute_and_edit(
+                text=f'{mention(self.user_to_mute)} was muted for {minutes} minutes' + self.get_voters(),
                 client=self.client,
                 msg_to_edit=self.msg_to_edit,
                 until_date=datetime.datetime.now() + datetime.timedelta(
-                    minutes = count * 30,
+                    minutes = minutes,
                 ),
             )
         else:
             await perms.unmute_and_edit(
+                text=f'{mention(self.user_to_mute)} was unmuted, mute votes must exceed unmute by 2 for successfull mute' + self.get_voters(),
                 client=self.client,
                 msg_to_edit=self.msg_to_edit,
             )
