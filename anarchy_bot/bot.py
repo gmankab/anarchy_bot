@@ -609,9 +609,9 @@ async def selfmute(
     perms = Perms(
         initiator=msg.from_user,
         user_to_mute=msg.from_user,
-        success_msg=f'succesfully muted you for 1 hour',
     )
     await perms.mute_and_edit(
+        text=f'succesfully muted you for 1 hour',
         client=client,
         msg_to_edit=msg_to_edit,
         until_date=datetime.datetime.now() + datetime.timedelta(
@@ -632,9 +632,9 @@ async def selfmute_del(
     perms = Perms(
         initiator=msg.from_user,
         user_to_mute=msg.from_user,
-        success_msg=f'succesfully minuted you for 1 hour',
     )
     await perms.mute_or_del(
+        text=f'succesfully minuted you for 1 hour',
         client=client,
         msg_to_del=msg,
         until_date=datetime.datetime.now() + datetime.timedelta(
