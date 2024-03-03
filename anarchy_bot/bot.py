@@ -639,7 +639,7 @@ async def selfmute_del(
         user_to_mute=msg.from_user,
     )
     await perms.mute_or_del(
-        text=f'succesfully minuted you for 1 hour',
+        text=f'succesfully muted you for 1 hour',
         client=client,
         msg_to_del=msg,
         until_date=datetime.datetime.now() + datetime.timedelta(
