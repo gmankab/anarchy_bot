@@ -70,10 +70,13 @@ class Perms():
         error = await self.change_permissions(
             change_permissions_method=change_permissions_method,
         )
-        if error:
-            await msg_to_edit.edit(error)
-        else:
-            await msg_to_edit.edit(text)
+        try:
+            if error:
+                await msg_to_edit.edit(error)
+            else:
+                await msg_to_edit.edit(text)
+        except pyrogram.errors.MessageNotModified:
+            pass
 
     async def mute_and_edit(
         self,
@@ -148,6 +151,8 @@ class Perms():
                 return f'you are bigger admin than me'
             else:
                 return f'{mention(self.user_to_mute)} is bigger admin than me'
+        except Exception as e:
+            return f'failed to mute/unmute: {e}'
         else:
             return ''
 
