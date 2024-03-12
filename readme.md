@@ -1,6 +1,6 @@
 # anarchy_bot
 
-telegram bot that can promote any user to admin
+telegram bot that can promote any user to admin, allows to vote for mute user
 
 ## install
 
