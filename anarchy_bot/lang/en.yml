@@ -6,7 +6,7 @@ help_msg: |
   /m | /mute - mute someone
   /sm | /selfmute - mute yourself
   /ba | /becomeadmin - promote yourself to admin
-  you can also set a custom title after /ba
+  you can also set a custom tag after /ba
 
   source code - github.com/gmankab/anarchy_bot
   """
