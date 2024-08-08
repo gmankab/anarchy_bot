@@ -2,11 +2,11 @@ help_msg: |
   """
   welcome to @gmanka's anarchy bot
   
-  /h | /help - get this command
+  /h | /help - display this message
   /m | /mute - mute someone
   /sm | /selfmute - mute yourself
-  /ba | /becomeadmin - promotes you to admin
-  also you can set custom tag after /ba
+  /ba | /becomeadmin - promote yourself to admin
+  you can also set a custom tag after /ba
 
   source code - github.com/gmankab/anarchy_bot
   """
@@ -24,7 +24,7 @@ mute_msg: |
   """
 permissions_msg: |
   """
-  i needs following permissions
+  i need the following permissions
   - change group info
   - ban users
   - add members
@@ -110,9 +110,9 @@ promote_to_admin_button:
 promote_to_admin_message: |
   {user} requested admin rights
   
-  press button below to promote him to admin
+  press the button below to promote him to admin
 request_admin_rights_message:
-  press button below to request admin rights
+  press the button below to request admin rights
 request_admin_rights_button:
   🥔 request admin rights
 chat_partner_must_request_cb:
@@ -132,9 +132,9 @@ shrink_button:
 cancel_button:
   ❌ cancel
 bad_nick_msg:
-  nick must contain only english letters and numbers, try again
+  the nickname must contain only english letters and numbers, try again
 too_long_nick_msg:
-  nick must not be longer then {count} symbols, try again
+  the nickname must not be longer then {count} symbols, try again
 not_coded_yet:
   not coded yet 😏
 setup_msg: |
