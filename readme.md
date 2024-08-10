@@ -1,6 +1,6 @@
 # anarchy_bot
 
-telegram bot that can promote any user to admin, allows to vote for mute user
+a telegram bot that can promote any user to admin, allows to vote for mute user
 
 ## install
 
@@ -16,13 +16,13 @@ python -m anarchy_bot
 
 ## translate to your language
 
-- fork repo
+- fork this repo
 - go to [anarchy_bot/lang](https://github.com/gmankab/anarchy_bot/tree/main/anarchy_bot/lang)
 - duplicate `en.yml` file
 - rename it to something like `ru.yml`
-- edit file
-- make pull request
-- bot automatically decects language set in user's telegram client, and will search the dir for file with translation
+- edit the file
+- make a pull request
+- the bot automatically detects user's language setting in telegram, and will search the `lang` dir for the translation file 
 
 ## licence
 
