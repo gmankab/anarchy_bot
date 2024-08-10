@@ -1,4 +1,4 @@
-# changlelog
+# changelog
 
 ## 23.1.6
 
